@@ -4,18 +4,26 @@ import time
 import requests
 from math import log, sqrt
 import nltk
+import glob
 # nltk.download('punkt')
 
 inverted_index = defaultdict(list)
-# TODO no scarability
-SOURCE_PATH = './sampledata/cpl1.0.txt'
-num_of_documents = 1
+sampledata_path = '/Users/haru/Develop/WorkSpace/searchengine/sampledata/*.txt'
+document_list = glob.glob(sampledata_path)
+num_of_documents = len(document_list)
+documents = {}
 vects_for_docs = []
 document_freq_vect = {}
 
 print('this is entry')
 
 # TODO if db exists, not to index use exist db
+
+
+def get_all_documents():
+    for i in range(num_of_documents):
+        documents[i] = document_list[i]
+    return documents
 
 
 def get_tokenized_normalized_token_list(text):
@@ -169,8 +177,9 @@ def get_result_from_query_vect(query_vector):
 
 
 print('start')
+documents = get_all_documents()
 for i in range(num_of_documents):
-    f = open(SOURCE_PATH, 'r')
+    f = open(documents[i], 'r')
     try:
         document = f.read()  # ほんとは一気readいくない負荷高め
         # TODO 圧縮メソッド
@@ -203,5 +212,5 @@ while True:
     result = get_result_from_query_vect(q_vect)
 
     for tup in result:
-        print("The document id = " + str(tup[0]).zfill(4) + " the"
+        print("The document id = " + str(tup[0]).zfill(4) + " The document file is " + document_list[tup[0]] + " the"
               " score weight is " + str(tup[1]))
